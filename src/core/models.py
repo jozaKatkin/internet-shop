@@ -57,7 +57,6 @@ class Status(models.Model):
 
 
 class ItemInOrder(models.Model):
-    order = models.ForeignKey('Order', null=True, related_name='items', on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     is_ordered = models.BooleanField(default=False)
     product = models.OneToOneField('Product', null=True, on_delete=models.SET_NULL)
@@ -81,7 +80,7 @@ class Order(models.Model):
     address = models.CharField(max_length=128, blank=False, null=False, default=None)
     comment = models.TextField(default=None, blank=True)
     is_ordered = models.BooleanField(default=True)
-    # items = models.ManyToManyField('ItemInOrder', related_name='items')
+    items = models.ManyToManyField('ItemInOrder', related_name='items')
 
     created = models.DateTimeField(auto_now_add=True, auto_now=False)
     updated = models.DateTimeField(auto_now_add=False, auto_now=True)

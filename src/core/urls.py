@@ -1,6 +1,6 @@
 from django.urls import path
-from core.views.product_detail import ProductDetailView
-from core.views.main_page import MainPageView
+from .views.product_detail import ProductDetailView
+from .views.main_page import MainPageView
 
 urlpatterns = [
     path('', MainPageView.as_view(), name='main_page_url'),

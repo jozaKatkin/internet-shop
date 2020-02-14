@@ -17,12 +17,8 @@
         <div>
             {{ product.price }} $
         </div>
-        <div class="add-to-card-btn">
-            <button class="btn btn-success">
-                Add to cart
-            </button>
-        </div>
-        <a href="{% url 'add_to_cart_view' %}" class="btn btn-primary">
+
+        <a href="{% url 'add_to_cart' product.pk%}" class="btn btn-primary">
               Add to cart
             </a>
 
