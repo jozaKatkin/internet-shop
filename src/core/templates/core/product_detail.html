@@ -18,7 +18,7 @@
             {{ product.price }} $
         </div>
 
-        <a href="{% url 'add_to_cart' product.pk%}" class="btn btn-primary">
+        <a href="{% url 'add_to_cart_url' pk=product.pk %}" class="btn btn-primary">
               Add to cart
             </a>
 

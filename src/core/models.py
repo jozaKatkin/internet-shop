@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Category(models.Model):
@@ -22,10 +23,14 @@ class Product(models.Model):
     description = models.TextField(blank=True, default=None)
     image = models.ImageField(upload_to='products_images/')
     is_active = models.BooleanField(default=True)
-    created = models.DateTimeField(auto_now_add=True, auto_now=False)
-    updated = models.DateTimeField(auto_now_add=False, auto_now=True)
 
     category = models.ForeignKey('Category', null=True, on_delete=models.SET_NULL, related_name='products')
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created = timezone.now()
+        self.updated = timezone.now()
+        return super(Product, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"Product {self.title}, {self.price}"
@@ -45,8 +50,11 @@ class Status(models.Model):
     )
     title = models.IntegerField(choices=TITLE, blank=True, null=True, default=1)
 
-    created = models.DateTimeField(auto_now_add=True, auto_now=False)
-    updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created = timezone.now()
+        self.updated = timezone.now()
+        return super(Status, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"Status {self.title}, updated {self.updated}"
@@ -73,17 +81,22 @@ class ItemInOrder(models.Model):
 
 
 class Order(models.Model):
-    customer = models.CharField(max_length=128, null=True, blank=True, default=None, help_text='First Name')
     status = models.ForeignKey('Status', null=True, on_delete=models.CASCADE, related_name='orders')
-    email = models.EmailField(default=None, help_text='Email', blank=True, null=True)
-    phone = models.CharField(max_length=48, blank=False, default=None)
-    address = models.CharField(max_length=128, blank=False, null=False, default=None)
-    comment = models.TextField(default=None, blank=True)
-    is_ordered = models.BooleanField(default=True)
+    email = models.EmailField(help_text='Email')
+    phone = models.CharField(max_length=48)
+    address = models.CharField(max_length=128)
+    comment = models.TextField(blank=True)
+    is_ordered = models.BooleanField(default=False)
     items = models.ManyToManyField('ItemInOrder', related_name='items')
 
-    created = models.DateTimeField(auto_now_add=True, auto_now=False)
-    updated = models.DateTimeField(auto_now_add=False, auto_now=True)
+    created_at = models.DateTimeField(default=None)
+    ordered_at = models.DateTimeField(default=None)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created_at = timezone.now()
+        self.ordered_at = timezone.now()
+        return super(Order, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"Order {self.id} {self.status.title}"
