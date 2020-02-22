@@ -6,7 +6,8 @@ from django.shortcuts import get_object_or_404, redirect
 def remove_1_pcs_from_cart(request, pk):
     product = get_object_or_404(Product, pk=pk)
     order_qs = Order.objects.filter(
-        ordered=False
+        is_ordered=False,
+        user=request.user
     )
     if order_qs.exists():
         order = order_qs[0]
@@ -14,7 +15,7 @@ def remove_1_pcs_from_cart(request, pk):
             item_in_order = ItemInOrder.objects.filter(
                 product=product,
                 user=request.user,
-                ordered=False
+                is_ordered=False
             )[0]
             if item_in_order.quantity > 1:
                 item_in_order.quantity -= 1
@@ -22,7 +23,7 @@ def remove_1_pcs_from_cart(request, pk):
             else:
                 order.items.remove(item_in_order)
             messages.info(request, "This item quantity was updated.")
-            return redirect("product_detail_url", pk=pk)
+            return redirect("order_summary_url")
         else:
             messages.info(request, "This item was not in your cart")
             return redirect("product_detail_url", pk=pk)

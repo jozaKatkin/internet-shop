@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <main>
+    <div class="container">
+
+    <div class="table-responsive text-nowrap">
+    <h2>Order Snippet</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Product</th>
+            <th scope="col">Price</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total Item Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item_in_order in order.items.all %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ item_in_order.product.title }}</td>
+            <td>{{ item_in_order.product.price }}</td>
+            <td>
+                {{ item_in_order.quantity }}
+            </td>
+            <td>
+                ${{ item_in_order.get_total_item_price }}
+            </td>
+        </tr>
+        {% endfor %}
+        {% if order.get_total %}
+        <tr>
+            <td colspan="4"><b>Order Total</b></td>
+            <td><b>${{ order.get_total }}</b></td>
+        </tr>
+        {% endif %}
+
+        </tbody>
+    </table>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Delivery address</th>
+            <th scope="col">Delivery time</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{ order.address }}</td>
+            <td>{{ order.delivery_time }}</td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                <h6>Order is successfully placed!</h6>
+                <br>
+                <a class='btn btn-primary float-left' href='/'>Main page</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    </div>
+
+    </div>
+  </main>
+
+{% endblock content %}

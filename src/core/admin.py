@@ -23,16 +23,6 @@ class CategoryAdmin(admin.ModelAdmin):
 admin.site.register(Category, CategoryAdmin)
 
 
-class StatusAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in Status._meta.fields]
-
-    class Meta:
-        model = Status
-
-
-admin.site.register(Status, StatusAdmin)
-
-
 class OrderAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Order._meta.fields]
 

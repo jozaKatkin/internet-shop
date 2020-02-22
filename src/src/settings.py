@@ -38,7 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # 'main',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'crispy_forms',
+    'django_countries',
+
     'core',
     'accounts',
 ]
@@ -122,11 +128,47 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
-STATICFILES_DIRS = ["src/static/"]
-
-STATIC_ROOT = os.path.join(BASE_DIR, "/static/")
-
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = ''
 MEDIA_URL = '/media/'
+MEDIA_ROOT = ''
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "static", "media")
+# Login/Logout
+
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/accounts/login/'
+LOGIN_EXEMPT_URLS = (
+    'accounts/logout/',
+    'accounts/register/',
+    'accounts/edit_profile/',
+)
+
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+
+# Auth
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+
+)
+
+SITE_ID = 1
+
+# crispy_forms
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# allauth form
+ACCOUNT_FORMS = {
+    'signup': 'accounts.forms.UserSignupForm'
+}
+
+# email verification
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_USERNAME_REQUIRED = False

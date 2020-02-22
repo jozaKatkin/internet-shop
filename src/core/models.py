@@ -1,5 +1,14 @@
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
+
+TITLE = (
+    (1, 'Processing'),
+    (2, 'Waiting to pick up for delivery'),
+    (3, 'In delivery'),
+    (4, 'Delivered'),
+    (5, 'Cancelled'),
+)
 
 
 class Category(models.Model):
@@ -15,7 +24,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    title = models.CharField(max_length=64, blank=True, default=None)
+    title = models.CharField(max_length=64)
     price = models.FloatField()
     # discount = models.IntegerField(default=0)
 
@@ -26,12 +35,6 @@ class Product(models.Model):
 
     category = models.ForeignKey('Category', null=True, on_delete=models.SET_NULL, related_name='products')
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.created = timezone.now()
-        self.updated = timezone.now()
-        return super(Product, self).save(*args, **kwargs)
-
     def __str__(self):
         return f"Product {self.title}, {self.price}"
 
@@ -40,34 +43,11 @@ class Product(models.Model):
         verbose_name_plural = 'Products'
 
 
-class Status(models.Model):
-    TITLE = (
-        (1, 'Processing'),
-        (2, 'Waiting to pick up for delivery'),
-        (3, 'In delivery'),
-        (4, 'Delivered'),
-        (5, 'Cancelled'),
-    )
-    title = models.IntegerField(choices=TITLE, blank=True, null=True, default=1)
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.created = timezone.now()
-        self.updated = timezone.now()
-        return super(Status, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return f"Status {self.title}, updated {self.updated}"
-
-    class Meta:
-        verbose_name = 'Status'
-        verbose_name_plural = 'Statuses'
-
-
 class ItemInOrder(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     is_ordered = models.BooleanField(default=False)
-    product = models.OneToOneField('Product', null=True, on_delete=models.SET_NULL)
+    product = models.ForeignKey('Product', null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Order item {self.product.title} x {self.quantity} pcs"
@@ -81,16 +61,21 @@ class ItemInOrder(models.Model):
 
 
 class Order(models.Model):
-    status = models.ForeignKey('Status', null=True, on_delete=models.CASCADE, related_name='orders')
-    email = models.EmailField(help_text='Email')
-    phone = models.CharField(max_length=48)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
+                             on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField(null=True)
+    phone = models.CharField(max_length=20)
     address = models.CharField(max_length=128)
     comment = models.TextField(blank=True)
     is_ordered = models.BooleanField(default=False)
     items = models.ManyToManyField('ItemInOrder', related_name='items')
+    delivery_time = models.TimeField(null=True)
 
-    created_at = models.DateTimeField(default=None)
-    ordered_at = models.DateTimeField(default=None)
+    created_at = models.DateTimeField(auto_now_add=True)
+    ordered_at = models.DateTimeField()
+    status = models.IntegerField(choices=TITLE, default=1)
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -99,7 +84,7 @@ class Order(models.Model):
         return super(Order, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"Order {self.id} {self.status.title}"
+        return f"Order {self.id} - {self.status}"
 
     class Meta:
         verbose_name = 'Order'

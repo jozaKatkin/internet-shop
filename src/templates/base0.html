@@ -11,56 +11,56 @@
 </head>
 <body>
 
- <div class="mt-5 pt-4">
+<div class="mt-5 pt-4">
     {% if messages %}
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
         {% endfor %}
     {% endif %}
-    </div>
+</div>
+
+
+<nav class="nav nav-pills nav-fill">
+
+    <li class="nav-item">
+        <a href="{% url 'order_summary_url' %}" class="nav-link waves-effect">
+            <span class="badge red z-depth-1 mr-1"> {{ request.user|cart_item_count}} </span>
+            <i class="fas fa-shopping-cart"></i>
+            <span class="clearfix d-none d-sm-inline-block"> Cart </span>
+        </a>
+    </li>
 
 
 
-    <nav class="nav nav-pills nav-fill">
-
-        <li class="nav-item">
-            <a href="#" class="nav-link waves-effect">
-              <span class="badge red z-depth-1 mr-1"> # </span>
-              <i class="fas fa-shopping-cart"></i>
-              <span class="clearfix d-none d-sm-inline-block"> Cart </span>
-            </a>
-          </li>
 
 
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
-               aria-expanded="false">Products</a>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="/">Pierogi</a>
-                <a class="dropdown-item" href="#">Bulki</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="/">All products</a>
-            </div>
-        </li>
 
-        <a class="nav-item nav-link" href="/">Home</a>
+    <a class="nav-item nav-link" href="/">Home</a>
+    {% if user.is_authenticated %}
+        <a class="nav-item nav-link" href="{% url 'logout_url' %}">Logout</a>
+    {% else %}
         <a class="nav-item nav-link" href="{% url 'login_url' %}">Login</a>
         <a class="nav-item nav-link" href="{% url 'register_url' %}">Register</a>
+    {% endif %}
 
-    </nav>
+</nav>
 
 
 <br>
 
 
-
-
 {% block content %}{% endblock %}
+
+<footer class="page-footer text-center font-small mt-4 wow fadeIn">
+    <div class="footer-copyright py-3">
+      © 2020 Copyright
+    </div>
+</footer>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
