@@ -2,18 +2,18 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from django.views import View
-from core.forms import AnonymousCheckoutForm, RegisteredUserCheckoutForm
+from core.forms import UserCheckoutForm
 from core.models import Order
 from accounts.models import UserProfile
 
 
-class RegisteredUserCheckoutView(View):
+class UserCheckoutView(View):
     def get(self, *args, **kwargs):
         if self.request.user.is_authenticated:
             try:
                 order = Order.objects.get(user=self.request.user, is_ordered=False)
                 user_profile = UserProfile.objects.get(user=self.request.user)
-                form = RegisteredUserCheckoutForm()
+                form = UserCheckoutForm()
                 context = {
                     'form': form,
                     'order': order,
@@ -33,7 +33,7 @@ class RegisteredUserCheckoutView(View):
 
     def post(self, *args, **kwargs):
         if self.request.user.is_authenticated:
-            form = RegisteredUserCheckoutForm(self.request.POST or None)
+            form = UserCheckoutForm(self.request.POST or None)
             try:
                 order = Order.objects.get(user=self.request.user, is_ordered=False)
                 user_profile = UserProfile.objects.get(user=self.request.user)

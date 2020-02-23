@@ -70,7 +70,7 @@ class Order(models.Model):
     address = models.CharField(max_length=128)
     comment = models.TextField(blank=True)
     is_ordered = models.BooleanField(default=False)
-    items = models.ManyToManyField('ItemInOrder', related_name='items')
+    items = models.ManyToManyField('ItemInOrder')
     delivery_time = models.TimeField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

@@ -18,8 +18,9 @@ def remove_from_cart(request, pk):
                 user=request.user
             )[0]
             order.items.remove(item_in_order)
+            item_in_order.delete()
             messages.info(request, "This item was removed from your cart.")
-            return redirect("product_detail_url", pk=pk)
+            return redirect("order_summary_url")
         else:
             messages.info(request, "This item was not in your cart")
             return redirect("product_detail_url", pk=pk)
