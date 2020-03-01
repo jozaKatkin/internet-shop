@@ -1,14 +1,26 @@
-from core.models import Order
+from cart.utils import get_cart
 from django import template
 
 register = template.Library()
 
 
-@register.filter(name='cart_item_count')
-def cart_item_count(user):
-    if user.is_authenticated:
-        qs = Order.objects.filter(user=user, is_ordered=False)
-        if qs.exists():
-            return qs[0].items.count()
-    return 0
+# @register.filter()
+# def cart_item_count(request):
+#     cart = get_cart(request)
+#     quantity = None
+#     if cart:
+#         quantity = cart.get_total_quantity_of_items()
+#     return quantity or 0
 
+
+@register.inclusion_tag('cart_item_count.html', takes_context=True)
+def cart_item_count(context):
+    request = context.get('request')
+    cart = get_cart(request)
+    quantity = None
+    if cart:
+        quantity = cart.get_total_quantity_of_items()
+
+    return {
+        'cart_item_count': quantity or 0
+    }

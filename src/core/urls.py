@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.urls import path
 from .views import *
 
@@ -6,10 +7,7 @@ urlpatterns = [
     path('pierogi/', PierogiView.as_view(), name='pierogi_url'),
     path('bulki/', BulkiView.as_view(), name='bulki_url'),
     path('product_detail/<int:pk>/', ProductDetailView.as_view(), name='product_detail_url'),
-    path('add_to_cart/<int:pk>', add_to_cart, name='add_to_cart_url'),
-    path('remove_from_cart/<int:pk>', remove_from_cart, name='remove_url'),
-    path('remove_1_pcs/<int:pk>', remove_1_pcs_from_cart, name='remove_1_pcs_url'),
-    path('order_summary/', OrderSummaryView.as_view(), name='order_summary_url'),
-    path('checkout/', UserCheckoutView.as_view(), name='checkout_url'),
-    path('success/', SuccessView.as_view(), name='success_url')
+    path('registered_user_checkout/', login_required(RegisteredCheckoutView.as_view()), name='registered_checkout_url'),
+    path('anonymous_user_checkout/', AnonymousCheckoutView.as_view(), name='anonymous_checkout_url'),
+    path('success/<int:pk>/', SuccessView.as_view(), name='success_url')
 ]

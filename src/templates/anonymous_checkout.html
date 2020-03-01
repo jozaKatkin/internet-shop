@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+{% block content %}
+
+    <main>
+        <div class="container wow fadeIn">
+            <h2 class="my-5 h2 text-center">Checkout form</h2>
+            <div class="row">
+                <div class="col-md-8 mb-4">
+                    <div class="card">
+                        <form action="{{ request.path }}" method="POST" class="card-body">
+                            {% csrf_token %}
+                            {% if not user.is_authenticated %}
+                                <div class="form">
+                                    {{ anonymous_form|crispy }}
+                                </div>
+                            {% endif %}
+
+
+                            {#                            {% if default_delivery_address %}#}
+                            {#                                <div class="custom-control custom-checkbox">#}
+                            {#                                    <input type="checkbox" class="custom-control-input" name="use_default_address"#}
+                            {#                                           id="use_default_address">#}
+                            {#                                    <label class="custom-control-label" for="use_default_address">Use default delivery#}
+                            {#                                        address: {{ default_delivery_address|truncatechars:10 }}</label>#}
+                            {#                                </div>#}
+                            {#                            {% endif %}#}
+
+                            {#                            <hr>#}
+                            {#                            <h3>Payment option</h3>#}
+                            {##}
+                            {#                            <div class="d-block my-3">#}
+                            {#                                {% for value, name in form.fields.payment_option.choices %}#}
+                            {#                                    <div class="custom-control custom-radio">#}
+                            {#                                        <input id="{{ name }}" name="payment_option" value="{{ value }}" type="radio"#}
+                            {#                                               class="custom-control-input" required>#}
+                            {#                                        <label class="custom-control-label" for="{{ name }}">{{ name }}</label>#}
+                            {#                                    </div>#}
+                            {#                                {% endfor %}#}
+                            {#                            </div>#}
+                            {#                            <hr>#}
+
+
+                            <hr class="mb-4">
+                            <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    {% include "order_snippet.html" %}
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+{% endblock content %}
+

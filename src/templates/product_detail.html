@@ -45,14 +45,18 @@
               </button>
 
             </form> {% endcomment %}
-            <a href="{% url 'add_to_cart_url' pk=product.pk %}" class="btn btn-primary btn-md my-0 p">
-              Add to cart
-              <i class="fas fa-shopping-cart ml-1"></i>
-            </a>
-            <a href="{% url 'remove_url' pk=product.pk %}" class="btn btn-danger btn-md my-0 p">
-              Remove from cart
-            </a>
-
+            <form method="post" action="{% url 'add_to_cart_url' product.pk %}">
+              {% csrf_token %}
+            <div class="product-quantity">
+              {{ form.quantity.errors }}
+              <p>Quantity:</p>
+              {{ form.quantity }}
+            </div>
+                <br>
+            <button type="submit" class="btn btn-primary btn-md my-0 p">
+              <i class="fa fa-shopping-bag" aria-hidden="true"></i>Add to cart
+            </button>
+          </form>
           </div>
           <!--Content-->
 

@@ -1,25 +1,52 @@
-from allauth.account.views import SignupView
 from django import forms
-from django_countries.fields import CountryField
-from django_countries.widgets import CountrySelectWidget
+from core.models import Order
+
+# PAYMENT_CHOICES = (
+#     ('1', 'Cash'),
+#     ('2', 'Card')
+# )
 
 
-PAYMENT_CHOICES = (
-    ('1', 'Cash'),
-    ('2', 'Card')
-)
-
-
-class UserCheckoutForm(forms.Form):
-    first_name = forms.CharField(max_length=100, required=False)
-    last_name = forms.CharField(max_length=100, required=False)
-    address = forms.CharField(max_length=128, required=False)
-    use_default_address = forms.BooleanField(required=False)
-    delivery_time = forms.TimeField(required=False, widget=forms.TimeInput(format='%H:%M'))
-    phone = forms.CharField(max_length=20, required=False)
+class AnonymousCheckoutForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=30, label='First Name', required=False)
     email = forms.EmailField(required=False)
-    commentary = forms.Textarea()
+    last_name = forms.CharField(max_length=30, label='Last Name', required=False)
+    phone = forms.CharField(max_length=20, required=True)
+    address = forms.CharField(max_length=225, required=True)
+    comment = forms.CharField(max_length=225, required=False)
+    delivery_time = forms.TimeField(required=False)
 
-    payment_option = forms.ChoiceField(
-        widget=forms.RadioSelect, choices=PAYMENT_CHOICES)
+    class Meta:
+        model = Order
+        fields = ['address', 'phone', 'delivery_time', 'first_name', 'last_name', 'comment']
+    #     widgets = {
+    #         'address': forms.TextInput(attrs={'class': 'form-control'}),
+    #         'comment': forms.Textarea(attrs={'class': 'form-control'}),
+    #         'phone': forms.TextInput(attrs={'class': 'form-control'}),
+    #         'delivery_time': forms.TimeInput(attrs={'class': 'form-control'})
+    #     }
+
+
+class RegisteredCheckoutForm(forms.ModelForm):
+    phone = forms.CharField(max_length=20, required=True)
+    address = forms.CharField(max_length=225, required=True)
+    comment = forms.CharField(max_length=225, required=False)
+    delivery_time = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'class': 'timepicker'}),
+                                    input_formats=['%H:%M'])
+
+    class Meta:
+        model = Order
+        fields = ['address', 'phone', 'delivery_time', 'comment']
+
+    # class Meta:
+    #     model = Order
+    #     fields = ['address', 'phone', 'delivery_time']
+    #     widgets = {
+    #         'address': forms.TextInput(attrs={'class': 'form-control'}),
+    #         'phone': forms.TextInput(attrs={'class': 'form-control'}),
+    #         'delivery_time': forms.TimeInput(attrs={'class': 'form-control'})
+    #     }
+
+
+
 

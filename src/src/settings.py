@@ -41,13 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'allauth',
     'allauth.account',
-    'allauth.socialaccount',
     'crispy_forms',
 
     'django_extensions',
 
     'core',
     'accounts',
+    'cart',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'src.urls'
@@ -135,7 +136,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = ''
 
 # Login/Logout
-
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
 LOGIN_EXEMPT_URLS = (
@@ -147,7 +147,6 @@ LOGIN_EXEMPT_URLS = (
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
 # Auth
-
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
@@ -156,6 +155,7 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 
 )
+AUTH_USER_MODEL = 'accounts.UserProfile'
 
 SITE_ID = 1
 
@@ -173,5 +173,19 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
+# settings file
 os.environ['DJANGO_SETTINGS_MODULE'] = 'src.settings'
+
+
+# sessions
+CART_SESSION_ID = 'user_cart'
+
+# email
+EMAIL_ADMIN = 'joza.k@yandex.ru'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_HOST_USER = 'joza.k@yandex.ru'
+EMAIL_HOST_PASSWORD = '%01D615h6u*'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

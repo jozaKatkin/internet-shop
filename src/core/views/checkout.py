@@ -1,85 +1,94 @@
+from allauth.account.views import login
 from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import redirect, render
-from django.views import View
-from core.forms import UserCheckoutForm
-from core.models import Order
-from accounts.models import UserProfile
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.views.generic import TemplateView
+from cart.utils import get_cart
+from core.forms import AnonymousCheckoutForm, RegisteredCheckoutForm
 
 
-class UserCheckoutView(View):
-    def get(self, *args, **kwargs):
+class RegisteredCheckoutView(TemplateView):
+    template_name = 'registered_checkout.html'
+    login_required = True
+
+    def dispatch(self, request, *args, **kwargs):
+        self.cart = get_cart(self.request)
+        if not self.cart:
+            return redirect('order_summary_url')
+
+        self.form = RegisteredCheckoutForm(request.POST if self.request.method == 'POST' else None)
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if not self.form.is_valid():
+            print(self.form.errors)
+            return self.get(request, *args, **kwargs)
+        order = self.create_order()
+        self.clean_session()
+        return redirect('success_url', order.pk)
+
+    def get_context_data(self, **kwargs):
+        context = super(RegisteredCheckoutView, self).get_context_data(**kwargs)
+        context['registered_form'] = self.form
+        context['cart'] = self.cart
+        return context
+
+    def create_order(self):
         if self.request.user.is_authenticated:
-            try:
-                order = Order.objects.get(user=self.request.user, is_ordered=False)
-                user_profile = UserProfile.objects.get(user=self.request.user)
-                form = UserCheckoutForm()
-                context = {
-                    'form': form,
-                    'order': order,
-                }
-                if user_profile.address:
-                    context.update(
-                        {'default_delivery_address': user_profile.address})
-
-                return render(self.request, "checkout.html", context)
-
-            except ObjectDoesNotExist:
-                messages.info(self.request, "You do not have an active order")
-                return redirect("checkout_url")
-
+            registered_order = self.form.save(commit=False)
+            registered_order.cart = self.cart
+            registered_order.user = self.request.user
+            registered_order.save()
+            registered_order.create_order_items()
+            return registered_order
         else:
-            return redirect('registered_user_checkout_url')
+            return redirect('order_summary_url')
 
-    def post(self, *args, **kwargs):
+    def clean_session(self):
+        try:
+            del self.request.session['user_cart']
+        except KeyError:
+            self.request.session.create()
+
+
+class AnonymousCheckoutView(TemplateView):
+    template_name = 'anonymous_checkout.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.cart = get_cart(self.request)
+        if not self.cart:
+            return redirect('order_summary_url')
+
+        self.form = AnonymousCheckoutForm(request.POST if self.request.method == 'POST' else None)
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        if not self.form.is_valid():
+            print(self.form.errors)
+            return self.get(request, *args, **kwargs)
+        order = self.create_order()
+        self.clean_session()
+        return redirect('success_url', order.pk)
+
+    def get_context_data(self, **kwargs):
+        context = super(AnonymousCheckoutView, self).get_context_data(**kwargs)
+        context['anonymous_form'] = self.form
+        context['cart'] = self.cart
+        return context
+
+    def create_order(self):
         if self.request.user.is_authenticated:
-            form = UserCheckoutForm(self.request.POST or None)
-            try:
-                order = Order.objects.get(user=self.request.user, is_ordered=False)
-                user_profile = UserProfile.objects.get(user=self.request.user)
-                if form.is_valid():
-                    use_default_address = form.cleaned_data.get(
-                        'use_default_address')
-                    if use_default_address:
-                        print("Using the default address")
-                        if user_profile.address:
-                            order.address = user_profile.address
-                            order.save()
-                        else:
-                            messages.info(
-                                self.request, "No default address available")
-                            return redirect('checkout_url')
-                    else:
-                        print("User is entering a new delivery address")
-                        if form.is_valid():
-                            order.address = form.cleaned_data.get('address')
-                            order.save()
-                        else:
-                            messages.info(
-                                self.request, "Please fill in the required delivery address")
-
-                    order.delivery_time = form.cleaned_data.get('delivery_time')
-                    order.save()
-
-                    payment_option = form.cleaned_data.get('payment_option')
-
-                    if payment_option == '1':
-                        return redirect('success_url')
-                    elif payment_option == '2':
-                        return redirect('success_url')
-                    else:
-                        messages.warning(
-                            self.request, "Invalid payment option selected")
-                        return redirect('checkout_url')
-
-                else:
-                    messages.info(
-                        self.request, "Invalid input")
-                    context = {'errors': form.errors}
-                    return context
-            except ObjectDoesNotExist:
-                messages.warning(self.request, "You do not have an active order")
-                return redirect("order_summary_url")
-
+            return redirect('order_summary_url')
         else:
-            return redirect('registered_user_checkout_url')
+            anonymous_order = self.form.save(commit=False)
+            anonymous_order.cart = self.cart
+            anonymous_order.save()
+            anonymous_order.create_order_items()
+            return anonymous_order
+
+    def clean_session(self):
+        try:
+            del self.request.session['user_cart']
+        except KeyError:
+            self.request.session.create()
+
