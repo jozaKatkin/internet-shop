@@ -42,12 +42,11 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'crispy_forms',
-
     'django_extensions',
 
-    'core',
     'accounts',
-    'cart',
+    'cart.apps.CartConfig',
+    'core.apps.CoreConfig',
 ]
 
 MIDDLEWARE = [
@@ -162,13 +161,15 @@ SITE_ID = 1
 # crispy_forms
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-# allauth form
-ACCOUNT_FORMS = {
-    'signup': 'accounts.forms.UserSignupForm'
-}
+# allauth forms
+# ACCOUNT_FORMS = {
+#     'signup': 'accounts.forms.UserSignupForm'
+# }
+ACCOUNT_SIGNUP_FORM_CLASS = 'accounts.forms.UserSignupForm'
+
 
 # email verification
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
@@ -186,6 +187,6 @@ CART_SESSION_ID = 'user_cart'
 EMAIL_ADMIN = 'joza.k@yandex.ru'
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_HOST_USER = 'joza.k@yandex.ru'
-EMAIL_HOST_PASSWORD = '%01D615h6u*'
+EMAIL_HOST_PASSWORD = 'developer'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

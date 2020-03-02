@@ -98,12 +98,6 @@ class Order(models.Model):
         verbose_name = 'Order'
         verbose_name_plural = 'Orders'
 
-    # def save(self, *args, **kwargs):
-    #     if not self.id:
-    #         self.created_at = timezone.now()
-    #     self.ordered_at = timezone.now()
-    #     return super(Order, self).save(*args, **kwargs)
-
     def __str__(self):
         return f"Order {self.id} - {self.status}"
 

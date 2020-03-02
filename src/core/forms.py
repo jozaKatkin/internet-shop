@@ -18,13 +18,7 @@ class AnonymousCheckoutForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        fields = ['address', 'phone', 'delivery_time', 'first_name', 'last_name', 'comment']
-    #     widgets = {
-    #         'address': forms.TextInput(attrs={'class': 'form-control'}),
-    #         'comment': forms.Textarea(attrs={'class': 'form-control'}),
-    #         'phone': forms.TextInput(attrs={'class': 'form-control'}),
-    #         'delivery_time': forms.TimeInput(attrs={'class': 'form-control'})
-    #     }
+        fields = ['address', 'phone', 'delivery_time', 'first_name', 'last_name', 'comment', 'email']
 
 
 class RegisteredCheckoutForm(forms.ModelForm):
@@ -38,14 +32,6 @@ class RegisteredCheckoutForm(forms.ModelForm):
         model = Order
         fields = ['address', 'phone', 'delivery_time', 'comment']
 
-    # class Meta:
-    #     model = Order
-    #     fields = ['address', 'phone', 'delivery_time']
-    #     widgets = {
-    #         'address': forms.TextInput(attrs={'class': 'form-control'}),
-    #         'phone': forms.TextInput(attrs={'class': 'form-control'}),
-    #         'delivery_time': forms.TimeInput(attrs={'class': 'form-control'})
-    #     }
 
 
 

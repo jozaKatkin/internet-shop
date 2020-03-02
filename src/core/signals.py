@@ -5,29 +5,26 @@ from django.template import Context
 from django.template.loader import get_template
 from src.settings import EMAIL_ADMIN
 from .models import Product, Order
+from django.forms import model_to_dict
 
 
 @receiver(pre_delete, sender=Product)
 def product_pre_delete_receiver(sender, instance, **kwargs):
-    """Instead of deleting object from DB set it's state is_active to False"""
     instance.is_active = False
 
 
 @receiver(post_delete, sender=Product)
 def product_post_delete_receiver(sender, instance, **kwargs):
-    """Save changed state of instance"""
     instance.save()
 
 
 @receiver(post_save, sender=Order)
 def send_order_email_confirmation(sender, instance, **kwargs):
-    """
-    Send email to customer with order details.
-    """
     order = instance
-    message = get_template("emails/order_confirmation.html").render(Context({
-        'order': order
-    }))
+
+    message = get_template("emails/order_confirmation.html").render({
+        'order': model_to_dict(order)
+    })
     mail = EmailMessage(
         subject="Order confirmation",
         body=message,

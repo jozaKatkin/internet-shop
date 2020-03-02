@@ -36,15 +36,6 @@
 
             <p>{{ product.description }}</p>
 
-            {% comment %} <form class="d-flex justify-content-left">
-              <!-- Default input -->
-              <input type="number" value="1" aria-label="Search" class="form-control" style="width: 100px">
-              <button class="btn btn-primary btn-md my-0 p" type="submit">
-                Add to cart
-                <i class="fas fa-shopping-cart ml-1"></i>
-              </button>
-
-            </form> {% endcomment %}
             <form method="post" action="{% url 'add_to_cart_url' product.pk %}">
               {% csrf_token %}
             <div class="product-quantity">

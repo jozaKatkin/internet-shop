@@ -4,15 +4,6 @@ from django import template
 register = template.Library()
 
 
-# @register.filter()
-# def cart_item_count(request):
-#     cart = get_cart(request)
-#     quantity = None
-#     if cart:
-#         quantity = cart.get_total_quantity_of_items()
-#     return quantity or 0
-
-
 @register.inclusion_tag('cart_item_count.html', takes_context=True)
 def cart_item_count(context):
     request = context.get('request')

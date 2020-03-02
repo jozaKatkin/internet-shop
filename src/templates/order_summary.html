@@ -23,9 +23,7 @@
             <td>{{ cart_item.product.title }}</td>
             <td>{{ cart_item.product.price }}</td>
             <td>
-{#                <a href="{% url 'remove_1_pcs_url' pk=item_in_order.product.pk %}"><i class="fas fa-minus mr-2"></i></a>#}
-{#                {{ item_in_order.quantity }}#}
-{#                <a href="{% url 'add_to_cart_url' pk=item_in_order.product.pk %}"><i class="fas fa-plus ml-2"></i></a>#}
+
                 <form action="{% url "update_url" cart_item.pk %}" method="post">
                     {% csrf_token %}
                     <label>
