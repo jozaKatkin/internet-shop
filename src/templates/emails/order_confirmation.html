@@ -2,44 +2,50 @@
 <html>
 <body>
 <br>
-
-<h2>Thank you for your order, {{ order.first_name }}</h2>
+{% if order.first_name %}
+    <h2>Thank you for your order, {{ order.first_name }}</h2>
+{% endif %}
 <h3>Your Order ID: {{ order.short_uuid }}</h3>
 
 
 <h3>Delivery Details:</h3>
-
-{{ order.first_name }} <br>
-{{ order.last_name }} <br>
-{{ order.address}}
+{% if order.first_name and order.last_name %}
+    {{ order.first_name }} <br>
+    {{ order.last_name }} <br>
+{% endif %}
+{{ order.address }}
 
 <h3>
-  Contact Details:
+    Contact Details:
 </h3>
 Email: {{ order.email }} <br/>
 Phone: {{ order.phone }}
-
 <h2>Order Details:</h2>
 
 <table>
-  <thead>
-  <tr>
-    <th>Product</th>
-    <th>Quantity</th>
-    <th>Price</th>
-    <th>Total Price</th>
-  </tr>
-  </thead>
-  <tbody>
-  {% for item in order.items_in_order %}
+    <thead>
     <tr>
-      <td>{{ item.title }}</td>
-      <td>{{ item.quantity }}</td>
-      <td>{{ item.price }}</td>
-      <td>{{ item.total_price }}</td>
+        <th>Product |</th>
+        <th> Quantity |</th>
+        <th> Price |</th>
+        <th> Total Price</th>
     </tr>
-  {% endfor %}
-  </tbody>
+    </thead>
+    <tbody>
+    {% for item in order.items_in_order %}
+        <tr>
+            <td>{{ item.title }} </td>
+            <td> {{ item.quantity }} </td>
+            <td> ${{ item.price }} </td>
+            <td> ${{ item.total_price }} </td>
+        </tr>
+    {% endfor %}
+{#    <tr>#}
+{#        <td colspan="4"><b>Order Total</b></td>#}
+{#        <td><b>${{ order.get_total }}</b></td>#}
+{#    </tr>#}
+    </tbody>
 </table>
+
 </body>
 </html>

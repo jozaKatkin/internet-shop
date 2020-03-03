@@ -7,10 +7,10 @@
     {% for cart_item in cart.items.all %}
     <li class="list-group-item d-flex justify-content-between lh-condensed">
         <div>
-        <h6 class="my-0">{{ cart_itemt.quantity }} x {{ cart_item.product.title}}</h6>
+        <h6 class="my-0">{{ cart_item.quantity }} x {{ cart_item.product.title}} ${{ cart_item.product.price }}</h6>
         <small class="text-muted">{{ cart_item.product.description}}</small>
         </div>
-        <span class="text-muted">${{ cart_item.get_total_item_price }}</span>
+        <span class="text-muted">${{ cart_item.total_price }}</span>
     </li>
     {% endfor %}
     <li class="list-group-item d-flex justify-content-between">

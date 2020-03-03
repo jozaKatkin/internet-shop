@@ -28,7 +28,8 @@ class Cart(models.Model):
         total = 0
         for item_in_cart in self.items.all():
             total += item_in_cart.get_total_item_price()
-        return total
+        self.price_total = total
+        return self.price_total
 
     def __str__(self):
         return f"Cart id: {self.pk}"

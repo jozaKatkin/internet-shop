@@ -47,7 +47,7 @@ class Product(models.Model):
     description = models.TextField(blank=True, default=None)
     image = models.ImageField(upload_to='static/media/products_images/')
     is_active = models.BooleanField(default=True, verbose_name='Active')
-    category = models.ManyToManyField('Category', blank=True)
+    category = models.ForeignKey('Category', blank=True, null=True, on_delete=models.SET_NULL)
 
     objects = ProductManager()
 
@@ -82,12 +82,12 @@ class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
                              on_delete=models.CASCADE)
     cart = models.ForeignKey('cart.Cart', on_delete=models.DO_NOTHING)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100, null=True)
+    last_name = models.CharField(max_length=100, null=True)
     email = models.EmailField(null=True, blank=True)
     phone = models.CharField(max_length=20)
     address = models.CharField(max_length=128)
-    comment = models.TextField(blank=True)
+    comment = models.TextField(null=True)
     delivery_time = models.TimeField(null=True)
     created_at = models.DateTimeField(auto_now=True)
     updated_at = models.DateTimeField(auto_now_add=True)
@@ -119,3 +119,27 @@ class Order(models.Model):
         for item in cart_items:
             ItemInOrder.objects.create(order=self, product=item.product,
                                        quantity=item.quantity)
+
+    def convert_items(self):
+        items_in_order = []
+        for item in self.cart.items.all():
+            data = {
+                'quantity': item.quantity,
+                'price': item.product.price,
+                'total_price': item.total_price,
+                'title': item.product.title
+            }
+            items_in_order.append(data)
+        return items_in_order
+
+    def converted_data(self):
+        return {
+            'short_uuid': self.get_short_uuid(),
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email,
+            'phone': self.phone,
+            'status': self.status,
+            'items_in_order': self.convert_items(),
+        }
+

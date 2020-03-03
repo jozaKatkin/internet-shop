@@ -28,6 +28,17 @@ class RegisteredCheckoutForm(forms.ModelForm):
     delivery_time = forms.TimeField(required=False, widget=forms.TimeInput(attrs={'class': 'timepicker'}),
                                     input_formats=['%H:%M'])
 
+    def __init__(self, *args, **kwargs):
+        initial_arguments = kwargs.get('initial', None)
+        updated_initial = {}
+        if initial_arguments:
+            user = initial_arguments.get('user', None)
+            if user:
+                updated_initial['phone'] = getattr(user, 'phone', None)
+                updated_initial['address'] = getattr(user, 'address', None)
+        kwargs.update(initial=updated_initial)
+        super(RegisteredCheckoutForm, self).__init__(*args, **kwargs)
+
     class Meta:
         model = Order
         fields = ['address', 'phone', 'delivery_time', 'comment']

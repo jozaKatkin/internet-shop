@@ -5,7 +5,6 @@ from django.template import Context
 from django.template.loader import get_template
 from src.settings import EMAIL_ADMIN
 from .models import Product, Order
-from django.forms import model_to_dict
 
 
 @receiver(pre_delete, sender=Product)
@@ -21,10 +20,7 @@ def product_post_delete_receiver(sender, instance, **kwargs):
 @receiver(post_save, sender=Order)
 def send_order_email_confirmation(sender, instance, **kwargs):
     order = instance
-
-    message = get_template("emails/order_confirmation.html").render({
-        'order': model_to_dict(order)
-    })
+    message = get_template("emails/order_confirmation.html").render({'order': order.converted_data()})
     mail = EmailMessage(
         subject="Order confirmation",
         body=message,
