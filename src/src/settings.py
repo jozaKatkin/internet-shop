@@ -190,3 +190,6 @@ EMAIL_HOST_USER = 'joza.k@yandex.ru'
 EMAIL_HOST_PASSWORD = 'developer'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+# messages
+MESSAGE_LEVEL = 10

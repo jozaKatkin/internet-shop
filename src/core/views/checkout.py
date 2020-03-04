@@ -1,9 +1,11 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from cart.utils import get_cart
 from core.forms import AnonymousCheckoutForm, RegisteredCheckoutForm
 from core.models import Order
+from datetime import datetime
 
 
 class RegisteredCheckoutView(TemplateView, LoginRequiredMixin):
@@ -25,19 +27,28 @@ class RegisteredCheckoutView(TemplateView, LoginRequiredMixin):
             print(self.form.errors)
             return self.get(request, *args, **kwargs)
         order = self.create_order()
+        messages.success(request, 'Your order was successfully created.')
         self.clean_session()
         return redirect('success_url', order.pk)
 
     def get_context_data(self, **kwargs):
-        context = super(RegisteredCheckoutView, self).get_context_data(**kwargs)
+        if not datetime.now().replace(hour=8, minute=00) < datetime.now() < datetime.now().replace(hour=22, minute=00):
+            time = False
+            messages.warning(self.request, 'You can place an order from 8am to 10pm, please wait.')
+            context = super(RegisteredCheckoutView, self).get_context_data(**kwargs)
+            context['time'] = time
+            return context
+        else:
+            time = True
+            context = super(RegisteredCheckoutView, self).get_context_data(**kwargs)
+            context['registered_form'] = RegisteredCheckoutForm(
+                initial={'user': self.request.user,
+                         'phone': self.request.user.phone,
+                         'address': self.request.user.address})
 
-        context['registered_form'] = RegisteredCheckoutForm(
-            initial={'user': self.request.user,
-                     'phone': self.request.user.phone,
-                     'address': self.request.user.address})
-
-        context['cart'] = self.cart
-        return context
+            context['cart'] = self.cart
+            context['time'] = time
+            return context
 
     def create_order(self):
         if self.request.user.is_authenticated:
@@ -54,6 +65,7 @@ class RegisteredCheckoutView(TemplateView, LoginRequiredMixin):
 
             registered_order.save()
             registered_order.create_order_items()
+
             return registered_order
         else:
             return redirect('order_summary_url')
@@ -82,13 +94,23 @@ class AnonymousCheckoutView(TemplateView):
         if not self.form.is_valid():
             return self.get(request, *args, **kwargs)
         order = self.create_order()
+        messages.success(request, 'Your order was successfully created.')
         self.clean_session()
         return redirect('success_url', order.pk)
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(AnonymousCheckoutView, self).get_context_data(**kwargs)
-        context['anonymous_form'] = self.form
-        context['cart'] = self.cart
+    def get_context_data(self, **kwargs):
+        if not datetime.now().replace(hour=8, minute=00) < datetime.now() < datetime.now().replace(hour=22, minute=00):
+            time = False
+            messages.warning(self.request, 'You can place an order from 8am to 10pm, please wait.')
+            context = super(AnonymousCheckoutView, self).get_context_data(**kwargs)
+            context['time'] = time
+            return context
+        else:
+            context = super(AnonymousCheckoutView, self).get_context_data(**kwargs)
+            context['anonymous_form'] = self.form
+            context['cart'] = self.cart
+            time = True
+            context['time'] = time
         return context
 
     def create_order(self):

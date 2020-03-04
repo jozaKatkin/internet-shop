@@ -2,6 +2,7 @@
 {% load crispy_forms_filters %}
 {% block content %}
 
+    {% if time  %}
     <main>
         <div class="container wow fadeIn">
             <h2 class="my-5 h2 text-center">Checkout form</h2>
@@ -33,6 +34,7 @@
 
         </div>
     </main>
+    {% endif %}
 
 {% endblock content %}
 

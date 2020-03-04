@@ -7,6 +7,7 @@ My final project - a simple bakery store.
 - authentication (allauth)
 - signals
 - pagination
+- time restriction on ordering
 
 ## Installation
 
@@ -36,6 +37,13 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 To send order confirmations use:
 ```python
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+```
+
+## Notes
+
+Products images are placed:
+```bash
+/src/static/media/products_images
 ```
 
 ## Built With
