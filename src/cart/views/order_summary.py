@@ -23,13 +23,4 @@ class OrderSummaryView(TemplateView):
         })
         return context
 
-        # try:
-        #     order = Order.objects.get(user=self.request.user, is_ordered=False)
-        #     context = {
-        #         'order': order
-        #     }
-        #     return render(self.request, 'order_summary.html', context)
-        # except ObjectDoesNotExist:
-        #     messages.warning(self.request, "You do not have an active order")
-        #     return redirect("/")
 
