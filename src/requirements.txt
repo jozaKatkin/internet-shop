@@ -13,7 +13,7 @@ django-extensions==2.2.8
 greenlet==0.4.15
 idna==2.8
 oauthlib==3.1.0
-Pillow==7.0.0
+Pillow==10.3.0
 pkg-resources==0.0.0
 Pygments==2.5.2
 python3-openid==3.1.0
